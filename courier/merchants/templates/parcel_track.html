@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+<div class="container">
+    <div class="row">
+
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents Tracking Search body -->
+        <div class="col-sm-12 col-md-12 col-lg-8">
+            <div class="card mt-3">
+                <div class="card-header">
+                    Track Parcel
+                </div>
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="track_id" placeholder="Input Tracking ID"
+                                placeholder="Input Tracking ID" />
+                        </div>
+                        <button type="submit" class="btn btn-own btn-block text-light" name="search">Search</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+
+            <!-- Main contents Tracking display body -->
+
+            {% if parcel_search is not none %}
+            {% for parcel in parcel_search %}
+            {% if parcel.parcel_status == 'Not pickup yet' %}
+            <div class='card'>
+                <div class="card-header">
+                    <b>Tracking Details</b>
+                </div>
+                <div class='card-body ml-md-5 ml-lg-7'>
+                    <div class='progressbar-wrapper'>
+                        <ul class="progressbar">
+                            <li class="active">Request</li>
+                            <li>Picked up</li>
+                            <li>In transit</li>
+                            <li>Delivered</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class='card'>
+                <div class='card-body'>
+                    <ul class="bar">
+                        <li>{{ parcel.parcel_date.strftime('%Y/%m/%d - %I:%M %p') }}-- Your request for parcel pickup has been placed. <i class="fas fa-check-circle"></i></li>
+                        <li>
+                            <div class='spinner-border' style='width: .8rem; height: .8rem;' role='status'></div>
+                        </li>
+                        <li>
+                            <div class='spinner-border' style='width: .8rem; height: .8rem;' role='status'></div>
+                        </li>
+                        <li>
+                            <div class='spinner-border' style='width: .8rem; height: .8rem;' role='status'></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            {% elif parcel.parcel_status == 'picked up' %}
+            <div class='card'>
+                <div class="card-header">
+                    <b>Tracking Details</b>
+                </div>
+                <div class='card-body ml-md-5 ml-lg-7'>
+                    <div class='progressbar-wrapper'>
+                        <ul class="progressbar">
+                            <li class="active">Request</li>
+                            <li class="active">Picked up</li>
+                            <li>In transit</li>
+                            <li>Delivered</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class='card'>
+                <div class='card-body'>
+                    <ul class="bar">
+                        <li>{{ parcel.parcel_date.strftime('%Y/%m/%d - %I:%M %p') }}-- Your request for parcel pickup has been placed. <i class="fas fa-check-circle"></i></li>
+                        <li>
+                            {{ parcel.updated_at.strftime('%Y/%m/%d - %I:%M %p') }}-- Your parcel picked up by {{ parcel.delivery_man }}
+                        </li>
+                        <li>
+                            <div class='spinner-border' style='width: .8rem; height: .8rem;' role='status'></div>
+                        </li>
+                        <li>
+                            <div class='spinner-border' style='width: .8rem; height: .8rem;' role='status'></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+
+            {% elif parcel.parcel_status == 'in transit' %}
+            <div class='card'>
+                <div class="card-header">
+                    <b>Tracking Details</b>
+                </div>
+                <div class='card-body ml-md-5 ml-lg-7'>
+                    <div class='progressbar-wrapper'>
+                        <ul class="progressbar">
+                            <li class="active">Request</li>
+                            <li class="active">Picked up</li>
+                            <li class="active">In transit</li>
+                            <li>Delivered</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class='card'>
+                <div class='card-body'>
+                    <ul class="bar">
+                        <li>{{ parcel.parcel_date.strftime('%Y/%m/%d - %I:%M %p') }}-- Your request for parcel pickup has been placed. <i class="fas fa-check-circle"></i></li>
+                        <li>
+                             Your parcel picked up by {{ parcel.delivery_man }} <i class="fas fa-check-circle"></i>
+                        </li>
+                        <li>
+                            {{ parcel.updated_at.strftime('%Y/%m/%d - %I:%M %p') }}-- Your parcel on the way with {{parcel.delivery_man}}
+                        </li>
+                        <li>
+                            <div class='spinner-border' style='width: .8rem; height: .8rem;' role='status'></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+
+            {% else %}
+            <div class='card'>
+                <div class="card-header">
+                    <b>Tracking Details</b>
+                </div>
+                <div class='card-body ml-md-5 ml-lg-7'>
+                    <div class='progressbar-wrapper'>
+                        <ul class="progressbar">
+                            <li class="active">Request</li>
+                            <li class="active">Picked up</li>
+                            <li class="active">In transit</li>
+                            <li class="active">Delivered</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class='card'>
+                <div class='card-body'>
+                    <ul class="bar">
+                        <li>{{ parcel.parcel_date.strftime('%Y/%m/%d - %I:%M %p') }}-- Your request for parcel pickup has been placed. <i class="fas fa-check-circle"></i></li>
+                        <li>
+                             Your parcel picked up by {{ parcel.delivery_man }} <i class="fas fa-check-circle"></i>
+                        </li>
+                        <li>
+                             Your parcel on the way with {{parcel.delivery_man}} <i class="fas fa-check-circle"></i>
+                        </li>
+                        <li>
+                            {{ parcel.updated_at.strftime('%Y/%m/%d - %I:%M %p') }}-- Your parcel has been delivered. <i class="fas fa-check-circle"></i>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            <br>
+            <div class="table-responsive-sm">
+                <table class="table table-light mb-3">
+                    <thead class="thead-bom">
+                        <tr>
+                            <th scope="col">Track-ID</th>
+                            <th scope="col">Recipient Name</th>
+                            <th scope="col">Recipient Address</th>
+                            <th scope="col">Delivery Zone</th>
+                            <th scope="col">Delivery Man</th>
+                            <th scope="col">Parcel Status</th>
+                        </tr>
+
+
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>{{parcel.id}}</td>
+                            <td>{{parcel.receiver_name}}</td>
+                            <td>{{parcel.receiver_address}}</td>
+                            <td>{{parcel.delivery_area}}</td>
+                            <td>{{parcel.delivery_man}}</td>
+                            <td>{{parcel.parcel_status}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

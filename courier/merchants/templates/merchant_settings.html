@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Sub menu slidebar -->
+
+<div class="container">
+    <div class="row">
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents -->
+        <!-------------------------------- Sidebar col-8 Start ---------------------------->
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+
+            <div class='alert alert-warning mt-3' role='alert'>
+                <h4 class='alert-heading'>Dear Marchant!</h4>
+                <p>You cannot change BKash and Bank Information by yourself. If you want to change these information
+                    please come to our office or follow the below instruction. Thank you!</p>
+                <hr>
+                <p class='b-0'>If you have any problem or queries or complain, contact support team <b>09678-100800</b>.
+                </p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="card mb-3 mt-2">
+                <div class="card-header bg-head w-100">
+                    <h4>Marchant Details</h4>
+                </div>
+                <div class="table-responsive-lg">
+                    <table class="table table-light text-left w-auto mb-0">
+                        {% for info in get_info %}
+                        <tr>
+                            <th class="table-success w-25" scope="col">Username</th>
+                            <td class="w-25">{{info.username}}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-success w-25" scope="col">Email Address</th>
+                            <td class="w-25">{{info.email}}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-success w-25" scope="col">Pickup Address</th>
+                            <td class="w-25">{{info.pickup_address}}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-success w-25" scope="col">BKash No.</th>
+                            <td class="w-25">{{info.bkash_number}}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-success w-25" scope="col">Bank Acc.</th>
+                            <td class="w-25">{{info.bank_number}}</td>
+                        </tr>
+                        <tr>
+                            <th class="table-success w-25" scope="col">Mobile No</th>
+                            <td class="w-25">{{info.mobile_number}}</td>
+                        </tr>
+                        <tr>
+                            <td><button type='button' class='btn btn-warning btn-block text-black' data-toggle='modal'
+                                    data-target='#pic_update_modal{{info.id}}'><i class='fa fa-camera'></i> Change Picture </button></td>
+                            <td><button type='button' class='btn btn-own btn-block' data-toggle="modal"
+                                    data-target="#update_modal{{info.id}}"><i class='fas fa-edit'></i>
+                                    Update Profile</button></td>
+                            <!-------------------------------- Data Update Modal Start ---------------------------->
+
+                            <div class="modal" id="update_modal{{info.id}}" tabindex="-1" role="dialog">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Update Information</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" action="{{ url_for('merchant.merchant_settings')}}">
+                                                <div class="form-group">
+                                                    <label for="Username">Username</label>
+                                                    <input class="form-control" type="text" value="{{info.username}}"
+                                                        name="username" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Email">Email</label>
+                                                    <input class="form-control" type="text" value="{{info.email}}"
+                                                        name="email" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Email">Pickup Address</label>
+                                                    <input class="form-control" type="text"
+                                                        value="{{info.pickup_address}}" name="info.pickup_address"
+                                                        readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Current_pass">Current Password</label>
+                                                    <input class="form-control" type="password" name="old_pass">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="New_pass">New Password</label>
+                                                    <input class="form-control" type="password" name="new_pass">
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-own btn-light" name="update">Save
+                                                changes</button>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-------------------------------- Data Update Modal END ---------------------------->
+                            <!-------------------------------- Image Update Modal Start ---------------------------->
+
+                            <div class="modal" id="pic_update_modal{{info.id}}" tabindex="-1" role="dialog">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Update Information</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" action="" enctype="multipart/form-data">
+                                                <div class="custom-file">
+                                                    <input type="file" name="file">
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-own btn-light" name="submit">Save
+                                                changes</button>
+                                        </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-------------------------------- Image Update Modal END ---------------------------->
+
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-------------------------------- Sidebar col-8 END ---------------------------->
+
+    </div>
+</div>
+
+
+{% endblock %}

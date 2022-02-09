@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Sub menu slidebar -->
+
+<div class="container">
+    <div class="row">
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents -->
+        <!-------------------------------- Sidebar col-8 Start ---------------------------->
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    Search Data
+                </div>
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="track_number"
+                                placeholder="Input Tracking ID" />
+                        </div>
+                        <button type="submit" class="btn btn-own btn-block text-light" name="search">Search</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <!------------------------------ Data SearchBox End ---------------------------->
+
+            {% if parcel_search %}
+
+            <div class="card">
+                <div class="card-header bg-head">
+                    <h4>Parcel Information</h4>
+                </div>
+                <div class="table-responsive-sm table-sm">
+                    <table class="table table-light text-center">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">Recipient Name</th>
+                                <th scope="col">Recipient Number</th>
+                                <th scope="col">Recipient Address</th>
+                                <th scope="col">Delivery Zone</th>
+                                <th scope="col">Collectable Amount</th>
+                                <th scope="col">Track ID</th>
+                                <th scope="col">Cancel</th>
+                                <th scope="col">Invoice PDF</th>
+                            </tr>
+                        </thead>
+                        {% for parcels in parcel_search %}
+                        <tr>
+                            <td>
+                                {{ parcels.receiver_name }}
+                            </td>
+                            <td>
+                                {{ parcels.receiver_number }}
+                            </td>
+                            <td>
+                                {{ parcels.receiver_address }}
+                            </td>
+                            <td>
+                                {{ parcels.delivery_area }}
+                            </td>
+                            <td>
+                                {{ parcels.collectable_amount }}
+                            </td>
+                            <td>
+                                {{ parcels.id }}
+                            </td>
+                            <td>
+                                <form method='get' action=''><button type='submit' class='btn btn-danger' name='cancel'
+                                        value='{$pid}'><i class='fas fa-minus-circle'></i></button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method='get' action='../include/invoice.php'><button type='submit'
+                                        class='btn btn-danger' name='invoice' value='{$pid}'><i
+                                            class='far fa-file-pdf'></i></button></form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            {% else %}
+            {% if not parcel_list.items == [] %}
+            <div class="table-responsive-sm table-sm">
+                <table class="table table-light text-center">
+                    <thead class="thead-bom">
+                        <tr>
+                            <th scope="col">Recipient Name</th>
+                            <th scope="col">Recipient Number</th>
+                            <th scope="col">Recipient Address</th>
+                            <th scope="col">Delivery Zone</th>
+                            <th scope="col">Collectable Amount</th>
+                            <th scope="col">Track ID</th>
+                            <th scope="col">Cancel</th>
+                            <th scope="col">Invoice PDF</th>
+
+                        <tr>
+                    </thead>
+                    <tbody>
+                        {% for parcels in parcel_list.items %}
+                        <tr>
+                            <td>
+                                {{ parcels.receiver_name }}
+                            </td>
+                            <td>
+                                {{ parcels.receiver_number }}
+                            </td>
+                            <td>
+                                {{ parcels.receiver_address }}
+                            </td>
+                            <td>
+                                {{ parcels.delivery_area }}
+                            </td>
+                            <td>
+                                {{ parcels.collectable_amount }}
+                            </td>
+                            <td>
+                                {{ parcels.id }}
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" data-toggle="modal"
+                                    data-target="#del_modal{{parcels.id}}"><i class='fas fa-minus-circle'></i></button>
+                                {% include 'modals.html' %}
+                            </td>
+                            <td>
+                                <form method='get' action='../include/invoice.php'><button type='submit'
+                                        class='btn btn-danger' name='invoice' value='{$pid}'><i
+                                            class='far fa-file-pdf'></i></button></form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% for page_num in parcel_list.iter_pages(left_edge=1, right_edge=1, left_current=1,
+                    right_current=2)
+                    %}
+                    {% if parcel_list.page == page_num %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="{{ url_for('merchant.all_parcels', page=page_num) }}">{{ page_num
+                            }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('merchant.all_parcels', page=page_num) }}">{{ page_num
+                            }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% else %}
+            <div class='alert alert-warning' role='alert'>
+                You didn't make any pick-up request yet, click ' <i class='fas fa-folder-plus'></i><b> Add Pickup
+                    Request</b> ' for making new pick-up request
+            </div>
+            {% endif %}
+
+            {% endif %}
+
+
+
+        </div>
+
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+    </div>
+</div>
+
+
+{% endblock %}

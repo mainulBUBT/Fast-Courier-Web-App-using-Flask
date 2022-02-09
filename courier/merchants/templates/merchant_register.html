@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAST COURIER :: Merchant Registration</title>
+
+    <!-- STYLESHEET -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/indexs.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/progressbar.css') }}">
+
+
+    <!-- owned stylesheet -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #e5e8e8;
+            font-family: sans-serif;
+
+        }
+
+        #nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .navbar {
+            background-image: linear-gradient(to right, #009688, #004d40);
+        }
+
+        .navbar-nav li {
+            padding: 0 10px;
+        }
+
+        .navbar-nav li a {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        #link {
+            color: white;
+        }
+
+        .card {
+            padding-bottom: 25px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .btn-own {
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        #banner {
+            background-image: linear-gradient(to right, #009688, #004d40);
+            padding: 5%;
+            border-bottom-color: #eceff1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#">
+            <img src="{{ url_for('static', filename='images/icon1.png') }}" width="40" height="40" class="d-inline-block align-top" alt="">Fast
+            Delivery
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('core.index') }}">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Tracking</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('merchant.merchant_login') }}"><button type="button"
+                            class="btn btn-danger">Login</button></a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+    <section id="banner">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-6 mx-auto">
+                    <div class="card">
+                        <h5 class="card-header text-center text-dark">Merchant Registration</h5>
+                        <div class="card-body">
+                            <h5 class="card-title text-center" style="color: grey">Register to access the dashboard</h5>
+                            {% for field, errors in form.errors.items() %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle"></i> {{ ', '.join(errors) }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            {% endfor %}
+                            <form method="post" class="text-dark">
+                                {{ form.hidden_tag() }}
+
+                                <div class="form-group">
+                                    {{ form.email.label(class="form-group")}}
+                                    {% if form.email.errors %}
+                                    {{form.email(class="form-control is-invalid ") }}
+                                    {% else %}
+                                    {{ form.email(class="form-control") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.username.label(class="form-group") }}
+                                    {% if form.username.errors %}
+                                    {{form.username(class="form-control is-invalid ") }}
+                                    {% else %}
+                                    {{ form.username(class="form-control") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.mobile_number.label(class="form-group")}}
+                                    {% if form.mobile_number.errors %}
+                                    {{form.mobile_number(class="form-control is-invalid ") }}
+                                    {% else %}
+                                    {{ form.mobile_number(class="form-control") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.address.label(class="form-group")}}
+                                    {% if form.address.errors %}
+                                    {{form.address(class="form-control is-invalid ") }}
+                                    {% else %}
+                                    {{ form.address(class="form-control") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.password.label(class="form-group")}}
+                                    {% if form.password.errors %}
+                                    {{form.password(class="form-control is-invalid ") }}
+                                    {% else %}
+                                    {{ form.password(class="form-control") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.pass_confirm.label(class="form-group")}}
+                                    {% if form.pass_confirm.errors %}
+                                    {{form.pass_confirm(class="form-control is-invalid ") }}
+                                    {% else %}
+                                    {{ form.pass_confirm(class="form-control") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{form.submit(class="btn btn-own btn-block text-light")}}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-------------First JQuery then Popper then Bootstrap then Fontawesome ------------->
+
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/my.js') }}"></script>
+    <script src="https://kit.fontawesome.com/417824116f.js" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

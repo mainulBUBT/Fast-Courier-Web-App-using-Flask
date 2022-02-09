@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Sub menu slidebar -->
+
+<div class="container">
+    <div class="row">
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents -->
+        <!-------------------------------- Sidebar col-8 Start ---------------------------->
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    Search Data
+                </div>
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="sub" placeholder="Input Tracking ID" />
+                        </div>
+                        <button type="submit" class="btn btn-own btn-block text-light" name="search">Search</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <!------------------------------ Data SearchBox End ---------------------------->
+
+
+            <div class="card">
+                <div class="card-header bg-head">
+                    <h4>Your Payment Statements</h4>
+                </div>
+                <div class="table-responsive-sm">
+                    <table class="table table-light">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">Track-ID</th>
+                                <th scope="col">Charge Due</th>
+                                <th scope="col">Your Balance</th>
+                                <th scope="col">Parcel Status</th>
+                                <th scope="col">Payment Status</th>
+                                <th scope="col">Received By</th>
+                                <th scope="col">Invoice PDF</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for pay_result in payment_sql.items %}
+
+                            <tr>
+                                <td>
+                                    {{pay_result.id}}
+                                </td>
+                                <td>
+                                    {{pay_result.due_charge}}
+                                </td>
+                                <td>
+                                    {{pay_result.user_balance}}
+                                </td>
+                                <td>
+                                    {{pay_result.parcel_status}}
+                                </td>
+                                <td>
+                                    {% if pay_result.pay_status == '0' %}
+                                    Pending
+                                    {% else %}
+                                    Done
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if pay_result.pay_status == '0' %}
+                                    Not yet
+                                    {% elif pay_result.pay_status == '1' %}
+                                    Bkash
+                                    {% elif pay_result.pay_status == '2' %}
+                                    Bank
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method='get' action='../include/invoice.php'><button type='submit'
+                                            class='btn btn-danger' name='invoice' value='{$pid}'><i
+                                                class='far fa-file-pdf'></i></button></form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% for page_num in payment_sql.iter_pages(left_edge=1, right_edge=1, left_current=1,
+                    right_current=2)
+                    %}
+                    {% if payment_sql.page == page_num %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="{{ url_for('merchant.merchant_payments', page=page_num) }}">{{
+                            page_num
+                            }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('merchant.merchant_payments', page=page_num) }}">{{
+                            page_num
+                            }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+
+        </div>
+
+        <!-------------------------------- Sidebar col-8 END ---------------------------->
+
+
+
+    </div>
+</div>
+
+
+{% endblock %}

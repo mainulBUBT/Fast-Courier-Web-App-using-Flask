@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- {% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %} -->
+
+<!-- <div class="container">
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.receipient_name.label(class="form-group")}} {{ form.receipient_name(class="form-control")}}
+        </div>
+        <div class="form-group">
+            {{ form.receipient_number.label(class="form-group") }} {{ form.receipient_number(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.select_zone.label(class="form-group") }} {{form.select_zone(class="form-control", id="zone") }}
+            <div class="form-group">
+            </div>
+            <div class="form-group">
+                {{ form.select_weight.label(class="form-group") }} {{ form.select_weight(class="form-control",
+                id="weight") }}
+            </div>
+            <div class="form-group">
+                {{ form.receipient_address.label(class="form-group") }} {{ form.receipient_address(class="form-control")
+                }}
+            </div>
+            <div class="form-group">
+                {{ form.collectable_amount.label(class="form-group") }} {{ form.collectable_amount(class="form-control")
+                }}
+            </div>
+            <div class="form-group">
+                {{form.submit(class="btn btn-success btn-block")}}
+            </div>
+    </form>
+</div> -->
+
+
+
+
+
+
+<div class="container">
+    <div class="row">
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents -->
+        <div class="col-sm-12 col-md-12 col-lg-8 mt-sm-3">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="card mt-3 mb-3">
+                <div class="card-header">
+                    Add New Parcel Request
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                            {{ form.receipient_name.label(class="form-group")}} {{
+                            form.receipient_name(class="form-control")}}
+                        </div>
+                        <div class="form-group">
+                            {{ form.receipient_number.label(class="form-group") }} {{
+                            form.receipient_number(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.select_zone.label() }} {{form.select_zone(class="form-control", id="zone") }}
+                            <div class="form-group">
+                            </div>
+                            <div class="form-group">
+                                {{ form.select_weight.label() }} {{ form.select_weight(class="form-control",
+                                id="weight") }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.receipient_address.label() }} {{ form.receipient_address(class="form-control")
+                                }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.collectable_amount.label() }} {{ form.collectable_amount(class="form-control")
+                                }}
+                            </div>
+                            <div class="form-group">
+                                {{form.submit(class="btn btn-own btn-block text-light")}}
+                            </div>
+                    </form>
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

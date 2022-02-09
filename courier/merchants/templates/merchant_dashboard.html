@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Sub menu slidebar -->
+
+<div class="container">
+    <div class="row">
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents -->
+        <!-------------------------------- Sidebar col-8 Start ---------------------------->
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="row">
+                <!--------------------- Sidebar col-12 for DASHBOARD Start -------------------->
+                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px">
+                    <div class="card">
+                        <div class="card-header bg-head" style="color: white">
+                            <h3><i class="fas fa-tachometer-alt"></i> Dashboard</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <!--------------------- Sidebar col-12 for DASHBOARD END -------------------->
+            </div>
+            <!---------------------- col-12 row end --------------------->
+            <div class="row">
+                <!---------------------- row(1) for 6-6 grid Start --------------------->
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-light">
+                            <h2><i class="fas fa-box float-left"></i> 
+                                {{total_count}}
+                            </h2>
+                            <p>Requested Total Parcel</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <div class="card border">
+                        <div class="card-header bg-success text-light">
+                            <h2><i class="fas fa-calendar-check float-left"></i> 
+                                
+                                {{delivered_count}}
+                                
+                            </h2>
+                            <p>Delivered Total Parcel</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---------------------- row(1) for 6-6 grid END --------------------->
+
+            <div class="row" style="margin-top: 8px;">
+                <!---------------------- row(1) for 6-6 grid Start --------------------->
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-info text-light">
+                            <h2><i class="fas fa-hand-holding-usd float-left"></i> 
+                                 {{user_paid}} ৳
+                            </h2>
+                            <p>Total Amount Received</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <div class="card border">
+                        <div class="card-header bg-dark text-light">
+                            <h2><i class="fas fa-dollar-sign float-left"></i> 
+                                 {{user_due}} ৳
+                            </h2>
+                            <p>Total Due Amount</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---------------------- row(1) for 6-6 grid END --------------------->
+
+            <div class="row" style="margin-top: 8px;">
+                <!---------------------- row(1) for 6-6 grid Start --------------------->
+                <div class="col-sm-12 col-md-6 col-lg-6">
+                    <div class="card">
+                        <div class="card-header bg-danger text-light">
+                            <h2><i class="fas fa-truck float-left"></i> 
+                                 {{charge_due}} ৳
+                            </h2>
+                            <p> Due Service Charge</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---------------------- row(1) for 6-6 grid END --------------------->
+
+        </div>
+
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,27 @@
+<!-- Delete parcel Modal-->
+
+<div class="modal fade" id="del_modal{{parcels.id}}" tabindex="-1" role="dialog" aria-labelledby="del_modal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="del_modal{{parcels.id}}">Delete Parcel Request</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure to delete parcel request?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, Please.</button>
+        <form action="{{ url_for('merchant.delete_parcel', id=parcels.id) }}">
+          <input type="submit" class="btn btn-danger" value="Delete">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
