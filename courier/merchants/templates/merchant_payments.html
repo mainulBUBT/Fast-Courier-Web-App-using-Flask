@@ -22,7 +22,7 @@
                 <div class="card-body">
                     <form action="" method="POST">
                         <div class="form-group">
-                            <input class="form-control" type="text" name="sub" placeholder="Input Tracking ID" />
+                            <input class="form-control" type="text" name="track_id" placeholder="Input Tracking ID" />
                         </div>
                         <button type="submit" class="btn btn-own btn-block text-light" name="search">Search</button>
                     </form>
@@ -32,6 +32,70 @@
             <!------------------------------ Data SearchBox End ---------------------------->
 
 
+            {% if payment_search %}
+            <div class="card">
+                <div class="card-header bg-head">
+                    <h4>Your Payment Statements</h4>
+                </div>
+                <div class="table-responsive-sm">
+                    <table class="table table-light">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">Track-ID</th>
+                                <th scope="col">Charge Due</th>
+                                <th scope="col">Your Balance</th>
+                                <th scope="col">Parcel Status</th>
+                                <th scope="col">Payment Status</th>
+                                <th scope="col">Received By</th>
+                                <th scope="col">Invoice PDF</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for pay_result in payment_search %}
+
+                            <tr>
+                                <td>
+                                    {{pay_result.id}}
+                                </td>
+                                <td>
+                                    {{pay_result.due_charge}}
+                                </td>
+                                <td>
+                                    {{pay_result.user_balance}}
+                                </td>
+                                <td>
+                                    {{pay_result.parcel_status}}
+                                </td>
+                                <td>
+                                    {% if pay_result.pay_status == '0' %}
+                                    Pending
+                                    {% else %}
+                                    Done
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if pay_result.pay_status == '0' %}
+                                    Not yet
+                                    {% elif pay_result.pay_status == '1' %}
+                                    Bkash
+                                    {% elif pay_result.pay_status == '2' %}
+                                    Bank
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method='get' action='../include/invoice.php'><button type='submit'
+                                            class='btn btn-danger' name='invoice' value='{$pid}'><i
+                                                class='far fa-file-pdf'></i></button></form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            {% else %}
             <div class="card">
                 <div class="card-header bg-head">
                     <h4>Your Payment Statements</h4>
@@ -115,6 +179,8 @@
                     {% endfor %}
                 </ul>
             </nav>
+
+            {% endif %}
 
         </div>
 

@@ -1,0 +1,244 @@
+{% extends 'base.html' %}
+{% block style %}
+
+<style>
+    .container .row .card .card-header h2 {
+        font-size: 52px;
+        text-align: center;
+    }
+
+    .container .row .card .card-header p {
+        text-align: right;
+        font-size: 20px;
+        margin-right: 19px;
+    }
+
+    .border.border-primary {
+
+        border-color: #0339A6 !important;
+
+    }
+
+    .card-header.bg-primary {
+
+        background-color: #048ABF !important;
+
+    }
+
+    .border.border-primary {
+
+        border-color: #048ABF !important;
+
+    }
+
+    .bg-transit {
+        background-color: #F25116 !important;
+    }
+
+    .bg-delivered {
+        background-color: #38024D !important;
+    }
+
+    .bg-balance {
+        background-color: #2B190E !important;
+    }
+</style>
+
+
+{% endblock %}
+{% block content %}
+
+
+<!-------------------------------- Sidebar col-4 Start ---------------------------->
+
+<div class="container">
+    <div class="row">
+
+
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-8 Start ---------------------------->
+        <div class="col-sm-12 col-md-12 col-lg-8 mt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="row">
+
+                <!--------------------- Sidebar col-12 for DASHBOARD Start -------------------->
+                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px">
+                    <div class="card">
+                        <div class="card-header bg-head" style="color: white">
+                            <h3><i class="fas fa-tachometer-alt"></i> Dashboard</h3>
+                        </div>
+                    </div>
+                </div>
+                <!--------------------- Sidebar col-12 for DASHBOARD END -------------------->
+            </div>
+            <!---------------------- col-12 row end --------------------->
+            <div class="row">
+                <!---------------------- row(1) for 4-4-4 grid Start --------------------->
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-light">
+                            <h2><i class="fas fa-box float-left"></i>
+                                $row['total']
+                            </h2>
+                            <p>Total Parcel</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="url_for('admin.pending_parcels')" style="text-decoration: none">View details<i
+                                    class="fas fa-arrow-circle-right float-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="card border">
+                        <div class="card-header bg-success text-light">
+                            <h2><i class="fas fa-people-carry float-left"></i>
+                                $row['pickedup']
+                            </h2>
+                            <p>Picked Up</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="pickedup_parcels.php" style="text-decoration: none">View details<i
+                                    class="fas fa-arrow-circle-right float-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-transit text-light">
+                            <h2><i class="fas fa-shipping-fast float-left"></i>
+                                $row['transit']
+                            </h2>
+                            <p>In-transit</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="transit_parcels.php" style="text-decoration: none">View details<i
+                                    class="fas fa-arrow-circle-right float-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---------------------- row(1) for 4-4-4 grid END --------------------->
+
+            <!---------------------- row(2) for 4-4-4 grid Start --------------------->
+
+            <div class="row" style="margin-top: 8px;">
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-delivered text-light">
+                            <h2><i class="fas fa-calendar-check float-left"></i>
+                                $row['delivered']
+                            </h2>
+                            <p>Delivered</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="delivered_parcels.php" style="text-decoration: none">View details<i
+                                    class="fas fa-arrow-circle-right float-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="card border">
+                        <div class="card-header bg-danger text-light">
+                            <h2><i class="fas fa-user float-left"></i>
+                                $row['marchant']
+                            </h2>
+                            <p>Marchants</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="merchants_details.php" style="text-decoration: none">View details<i
+                                    class="fas fa-arrow-circle-right float-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 col-lg-4">
+                    <div class="card">
+                        <div class="card-header bg-balance text-light">
+                            <h2><i class="fas fas fa-dollar-sign float-left"></i>
+                                $row['payments']
+                            </h2>
+                            <p>Balance</p>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <a href="admin_payments.php" style="text-decoration: none">View details<i
+                                    class="fas fa-arrow-circle-right float-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!---------------------- row(2) for 4-4-4 grid END --------------------->
+
+            <br>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <div id="accordion">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <a class="card-link text-dark" data-toggle="collapse" href="#collapseOne">
+                                    <b><i class="far fa-chart-bar"></i> Daily Parcel Request <i
+                                            class="fas fa-caret-down  float-right"></i></b>
+                                </a>
+                            </div>
+                            <div id="collapseOne" class="collapse show" data-parent="#accordion">
+                                <div class="card-body">
+                                    <!-- <div id="chartContainer" style="height: 250px; max-width: 920px; margin: 0px auto;"></div> -->
+                                    <div id="chart"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header" role="tab">
+                                <a class=" card-link text-dark" data-toggle="collapse" href="#collapseTwo">
+                                    <b><i class="far fa-chart-bar"></i> Monthly Parcel Request <i
+                                            class="fas fa-caret-down  float-right"></i></b>
+                                </a>
+                            </div>
+                            <div id="collapseTwo" class="collapse" data-parent="#accordion">
+                                <div class="card-body">
+                                    <div id="month-chart"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+                <!----Col for chart END--------->
+            </div>
+            <!-----row for char END------------>
+
+
+
+
+
+
+
+        </div>
+        <!-------------------------------- Sidebar col-8 END ---------------------------->
+
+
+    </div>
+</div>
+<!-------------------------------- Main Grid Part END ---------------------------->
+
+
+
+
+{%endblock%}

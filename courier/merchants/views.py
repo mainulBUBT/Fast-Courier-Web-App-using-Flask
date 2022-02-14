@@ -1,7 +1,6 @@
 import os
 from flask import redirect, render_template,request, Blueprint, url_for, flash, session, current_app
 from flask_login import login_user, logout_user, current_user
-from sqlalchemy import case
 from sqlalchemy.sql import func
 from os import abort
 from werkzeug.utils import secure_filename
@@ -51,7 +50,8 @@ def merchant_login():
                     next = url_for('merchant.merchant_dashboard')
                 return redirect(next)
             else:
-                return redirect(url_for('merchant.logout'))
+                flash('Username and Password not found!', 'danger')
+                return redirect(url_for('merchant.merchant_login'))
         else:
             flash('information Wrong!', "danger" )
     
@@ -59,10 +59,16 @@ def merchant_login():
     
 @merchant.route('/logout')
 def logout():
-    logout_user()
-    session.pop('logged_in_user', None)
-    flash('Logged out Successfully!', 'success')
-    return redirect(url_for('merchant.merchant_login'))
+    if 'logged_in_user' in session:
+        logout_user()
+        session.pop('logged_in_user', None)
+        flash('Logged out Successfully!', 'success')
+        return redirect(url_for('merchant.merchant_login'))
+
+    elif 'logged_in_admin' in session:
+        session.pop('logged_in_admin', None)
+        flash('Logged out Successfully!', 'success')
+        return redirect(url_for('admin.admin_login'))
 
 
 @merchant.route('/merchant_register', methods=['POST', 'GET'])
@@ -175,11 +181,19 @@ def parcel_track():
 @merchant.route('/merchant_payments', methods = ['GET', 'POST'])
 def merchant_payments():
     payment_search = ''
-
+    payment_sql = ''
     page = request.args.get('page',1,type=int)
-    payment_sql = db.session.query(Parcel.id, Parcel.due_charge, Parcel.user_balance, Parcel.parcel_status, Parcel.pay_method, Parcel.pay_status).filter(Parcel.merchant_id == current_user.id).order_by(Parcel.id.desc()).paginate(page=page,per_page=8)
 
-    return render_template('merchant_payments.html', sidebar_name='merchant_payments', payment_sql=payment_sql)
+    if request.method == 'POST':
+        if 'search' in request.form:
+            track_id = request.form['track_id']
+            print(track_id)
+            payment_search = db.session.query(Parcel.id, Parcel.due_charge, Parcel.user_balance, Parcel.parcel_status, Parcel.pay_method, Parcel.pay_status).filter(Parcel.merchant_id == current_user.id, Parcel.id == track_id)
+            print(payment_search)
+    else:
+        payment_sql = db.session.query(Parcel.id, Parcel.due_charge, Parcel.user_balance, Parcel.parcel_status, Parcel.pay_method, Parcel.pay_status).filter(Parcel.merchant_id == current_user.id).order_by(Parcel.id.desc()).paginate(page=page,per_page=8)
+
+    return render_template('merchant_payments.html', sidebar_name='merchant_payments', payment_sql=payment_sql, payment_search = payment_search)
 
 
 @merchant.route('/merchant_settings', methods=['GET', 'POST'])

@@ -37,6 +37,8 @@ login_manager.login_view = 'merchant.merchant_login'
 
 from courier.core.views import core
 from courier.merchants.views import merchant
+from courier.admin.views import admin
 
 app.register_blueprint(merchant)
 app.register_blueprint(core)
+app.register_blueprint(admin)

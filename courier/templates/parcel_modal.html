@@ -1,0 +1,63 @@
+<!-------------------------------- Data Update Modal Start ---------------------------->
+
+<div class="modal" id="editmodal{{parcels.id}}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Parcel Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Track-ID</label>
+                        <input class="form-control" type="text" value="{{parcels.id}}" name="parcel_id" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Recipient Name</label>
+                        <input class="form-control" type="text" value="{{ parcels.receiver_name }}" name="recv_name"
+                            readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Recipient Address</label>
+                        <input class="form-control" type="text" value="{{ parcels.receiver_address }}"
+                            name="recv_address" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Delivery Zone</label>
+                        <input class="form-control" type="text" value="{{ parcels.delivery_area }}" name="delivery_area"
+                            readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Recipient Number</label>
+                        <input class="form-control" type="text" value="{{ parcels.receiver_number }}"
+                            name="recv_number">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Dellivery Man</label>
+                        <input class="form-control" type="text" value="{{ parcels.delivery_man }}" name="delivery_man">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleFormControlSelect1">Parcel Status</label>
+                        <select class="form-control" value="{{ parcels.parcel_status }}" name="parcel_status">
+                            <option value="Not pickup yet">Not pickup yet</option>
+                            <option value="picked up">picked up</option>
+                            <option value="in transit">in transit</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="Return to Hub">Return to Hub</option>
+
+                        </select>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-own btn-light" name="update">Save changes</button>
+            </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+<!-------------------------------- Data Update Modal END ---------------------------->
