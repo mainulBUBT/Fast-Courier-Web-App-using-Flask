@@ -1,14 +1,10 @@
-from asyncio.windows_events import NULL
-from turtle import update
 from flask import Blueprint, redirect, request, render_template, url_for, session, flash
 from flask_login import login_user, current_user
 from functools import wraps
 
-from sqlalchemy import null
-
 from courier import db
 from courier.admin.forms import LoginForm
-from courier.models import Merchant, DeliveryInfo, Parcel, User
+from courier.models import Merchant, DeliveryInfo, Parcel, User, ReturnParcel
 
 
 
@@ -186,3 +182,67 @@ def transit_parcels():
         transit_list= db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status,DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'in transit').order_by(DeliveryInfo.book_date.asc()).paginate(page=page,per_page=8)
    
     return render_template('transit_parcels.html', transit_list = transit_list, transit_search=transit_search)
+
+
+@admin.route('/return_parcels', methods=['GET', 'POST'])
+def return_parcels():
+
+    return_search = ''
+    return_list = ''
+    reason_sql = ''
+
+    page = request.args.get('page',1,type=int)
+
+    if request.method == 'POST':
+        if 'search' in request.form:
+            track_number = int(request.form['track_number'])
+            return_search = db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number , Parcel.parcel_status == 'Return to Hub')
+        elif 'update' in request.form:
+            parcel_id = request.form['parcel_id']
+            delivery_man = request.form['delivery_man']
+            parcel_status = request.form['parcel_status']
+
+            update_sql = Parcel.query.filter_by(id=parcel_id).first()
+
+            if delivery_man and parcel_status is not None:
+                print(update_sql)
+                update_sql.delivery_man = delivery_man
+                update_sql.parcel_status = parcel_status
+                db.session.commit()
+                flash('Parcel Sent to the '+ parcel_status +' section', 'warning')
+                return redirect(url_for('admin.return_parcels'))
+
+        elif 'report_2' in request.form:
+            parcel_id = request.form['parcel_id']
+            reason = request.form['message']
+            
+            add_reason = ReturnParcel(parcel_id=parcel_id, reason=reason)
+            db.session.add(add_reason)
+            db.session.commit()
+            flash('Reported reason for return the parcel', 'danger')
+            return redirect(url_for('admin.return_parcels')) 
+
+        elif 'report_1' in request.form:
+            reason_id = request.form['reason_id']
+            print(reason_id)
+            parcel_id = request.form['parcel_id']
+            reason = request.form['message']
+            
+            update_reason = ReturnParcel.query.filter_by(id=reason_id).first()
+            print(update_reason)
+            if update_reason:
+                update_reason.parcel_id = parcel_id
+                update_reason.reason = reason
+                db.session.commit()
+                flash('Reported reason for return the parcel', 'danger')
+                return redirect(url_for('admin.return_parcels')) 
+    else:
+        return_list= db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status,DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'Return to Hub').order_by(DeliveryInfo.book_date.asc()).paginate(page=page,per_page=8)
+        
+        reason_sql = db.session.query(ReturnParcel.id , ReturnParcel.parcel_id, ReturnParcel.reason ,ReturnParcel.updated_date).join(Parcel).filter(Parcel.id == ReturnParcel.parcel_id)
+        # for row in reason_sql:
+        #     # return_parcel_id = row.parcel_id
+        #     # reason_message = row.reason
+        #     print(row.parcel_id)
+
+    return render_template('return_parcels.html', return_list = return_list, return_search=return_search, reason_sql = reason_sql)

@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Sub menu slidebar -->
+
+<div class="container">
+    <div class="row">
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents -->
+        <!-------------------------------- Sidebar col-8 Start ---------------------------->
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    Search Data
+                </div>
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="track_number"
+                                placeholder="Input Tracking ID" />
+                        </div>
+                        <button type="submit" class="btn btn-own btn-block text-light" name="search">Search</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <!------------------------------ Data SearchBox End ---------------------------->
+
+            {% if return_search %}
+
+            <div class="card">
+                <div class="card-header bg-head">
+                    <h4>Return Parcel Information</h4>
+                </div>
+                <div class="table-responsive-sm table-sm">
+                    <table class="table table-light text-center">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">Track ID</th>
+                                <th scope="col">Recipient Name</th>
+                                <th scope="col">Recipient Address</th>
+                                <th scope="col">Delivery Zone</th>
+                                <th scope="col">Delivery Man</th>
+                                <th scope="col">Parcel Status</th>
+                                <th scope="col">Take Action</th>
+                                <th scope="col">Invoice PDF</th>
+                            </tr>
+                        </thead>
+                        {% for parcels in return_search %}
+                        <tr>
+                            <td>
+                                {{ parcels.id }}
+                            </td>
+                            <td>
+                                {{ parcels.receiver_name }}
+                            </td>
+                            <td>
+                                {{ parcels.receiver_address }}
+                            </td>
+                            <td>
+                                {{ parcels.delivery_area }}
+                            </td>
+                            <td>
+                                {{ parcels.delivery_man }}
+                            </td>
+                            <td>
+                                {{ parcels.parcel_status }}
+                            </td>
+                            <td>
+                                <button type='button' class='btn btn-own' data-toggle='modal'
+                                    data-target='#editmodal{{parcels.id}}'><i class='fas fa-edit'></i></button>
+                            </td>
+
+                            <td>
+                                <form method='get' action='../include/invoice.php'><button type='submit'
+                                        class='btn btn-danger' name='invoice' value='{$pid}'><i
+                                            class='far fa-file-pdf'></i></button></form>
+                            </td>
+                        </tr>
+                        {% include 'parcel_modal.html' %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
+
+            {% else %}
+            {% if not return_list.items == [] %}
+
+            <div class="card">
+                <div class="card-header bg-head">
+                    <h4>Return Parcel list</h4>
+                </div>
+                <div class="table-responsive-sm table-sm">
+                    <table class="table table-light text-center">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">Track ID</th>
+                                <th scope="col">Recipient Name</th>
+                                <th scope="col">Recipient Address</th>
+                                <th scope="col">Delivery Zone</th>
+                                <th scope="col">Delivery Man</th>
+                                <th scope="col">Parcel Status</th>
+                                <th scope="col">Take Action</th>
+                                <th scope="col">Reason Report</th>
+
+                            <tr>
+                        </thead>
+                        <tbody>
+                            {% for parcels in return_list.items %}
+                            <tr>
+                                <td>
+                                    {{ parcels.id }}
+                                </td>
+                                <td>
+                                    {{ parcels.receiver_name }}
+                                </td>
+                                <td>
+                                    {{ parcels.receiver_address }}
+                                </td>
+                                <td>
+                                    {{ parcels.delivery_area }}
+                                </td>
+                                <td>
+                                    {{ parcels.delivery_man }}
+                                </td>
+                                <td>
+                                    {{ parcels.parcel_status }}
+                                </td>
+                                <td>
+                                    <button type='button' class='btn btn-own' data-toggle='modal'
+                                        data-target='#editmodal{{parcels.id}}'><i class='fas fa-edit'></i></button>
+                                </td>
+                                <td>
+                                    <button type='button' class='btn btn-warning' data-toggle='modal'
+                                        data-target='#reasonmodal{{parcels.id}}'><i class='far fa-eye'></i></button>
+                                </td>
+                            </tr>
+                            {% include 'parcel_modal.html' %}
+
+                            <!-------------------------------- Data Update Reason Modal Start ---------------------------->
+
+                            <div class="modal" id="reasonmodal{{parcels.id}}" tabindex="-1" role="dialog">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Update Parcel Information</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% for reason in reason_sql if parcels.id == reason.parcel_id %}
+
+                                            <form method="post">
+                                                <div class="form-group">
+                                                    <label for="Return-ID">Return-ID</label>
+                                                    <input class="form-control" type="text" name="reason_id"
+                                                        value="{{reason.id|e}}" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Track-ID">Track-ID</label>
+                                                    <input class="form-control" type="text"
+                                                        value="{{reason.parcel_id|e}}" name="parcel_id" readonly>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="Track-ID">Recent Reason Message</label>
+                                                    <blockquote class="blockquote text-left">
+                                                        <p class="mb-0">{{reason.reason}}</p>
+                                                        <footer class="blockquote-footer">Last Update <cite
+                                                                title="time">{{reason.updated_date.strftime('%d/%m/%Y -
+                                                                %I:%M %p')}}</cite></footer>
+                                                    </blockquote>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1">Override Reason Meassage</label>
+                                                    <textarea class="form-control" name="message" rows="3" required></textarea>
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-own btn-light" name="report_1">Report
+                                                Message</button>
+                                        </div>
+                                        </form>
+
+                                        {% else %}
+                                        <form method="post">
+                                            <div class="form-group">
+                                                <label for="Return-ID">Track-ID</label>
+                                                <input class="form-control" type="text" name="parcel_id" value="{{parcels.id}}" readonly>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="exampleInputEmail1">Add Reason Meassage</label>
+                                                <textarea class="form-control" name="message" rows="3" required></textarea>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-own btn-light" name="report_2">Report
+                                            Message</button>
+                                    </div>
+                                    </form>
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+                </div>
+                <!-------------------------------- Data Update Reason Modal END ---------------------------->
+                {% endfor %}
+                </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% for page_num in return_list.iter_pages(left_edge=1, right_edge=1, left_current=1,
+                right_current=2)
+                %}
+                {% if return_list.page == page_num %}
+                <li class="page-item disabled">
+                    <a class="page-link" href="{{ url_for('admin.return_parcels', page=page_num) }}">{{ page_num
+                        }}</a>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.return_parcels', page=page_num) }}">{{ page_num
+                        }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </nav>
+        {% else %}
+        <div class='alert alert-warning' role='alert'>
+            There is no return request.
+        </div>
+        {% endif %}
+
+        {% endif %}
+
+
+
+    </div>
+
+    <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+</div>
+</div>
+
+
+{% endblock %}
