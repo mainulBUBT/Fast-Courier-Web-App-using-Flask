@@ -53,7 +53,7 @@
 			</h5>
 		</div>
 		<a type="button"
-			class="list-group-item list-group-item-action" href="admin_dashboard.php">
+			class="list-group-item list-group-item-action" href="{{url_for('admin.admin_dashboard')}}">
 			<b><i class="fas fa-tachometer-alt"></i> Dashboard</a></b>
 		</a>
 		<div class="dropdown dropright">
@@ -72,7 +72,7 @@
 			<a class="list-group-item list-group-item-action dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
 				aria-haspopup="true" aria-expanded="false" ><b><i class="fas fa-users"></i> Users</a></b>
 			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-				<a class="dropdown-item" href="merchants_details.php">Merchant</a>
+				<a class="dropdown-item" href="{{url_for('admin.merchant_details')}}">Merchant</a>
 				<a class="dropdown-item" href="employee_details.php">Delivery Man</a>
 			</div>
 		</div>

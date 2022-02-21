@@ -1,0 +1,74 @@
+<!-------------------------------- Data Update Modal Start ---------------------------->
+
+<div class="modal" id="editUser{{user.id}}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Merchant Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Merchant ID</label>
+                        <input class="form-control" type="text" value="{{user.id}}" name="merchant_id" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Name</label>
+                        <input class="form-control" type="text" value="{{user.username}}" name="username" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Mobile Number</label>
+                        <input class="form-control" type="text" value="{{user.mobile_number}}" name="mobile_number">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email Address</label>
+                        <input class="form-control" type="text" value="{{user.email}}" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Pickup Address</label>
+                        <input class="form-control" type="text" value="{{user.pickup_add}}" name="pickup_add">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">BKash Account</label>
+                        <input class="form-control" type="text" value="{{user.bkash}}" name="bkash">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Bank Account</label>
+                        <input class="form-control" type="text" value="{{user.bank}}" name="bank">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Balance Total</label>
+                        <input class="form-control" type="text" value="{{user.balance}}" name="balance" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Due Delivery Charge</label>
+                        {% for charge in due_charge if user.id == charge.merchant_id %}
+                        <input class="form-control" type="text" value="{{charge.due_charge}}" name="due_balance"
+                            readonly>
+                        {% else %}
+                        <input class="form-control" type="text" value="0" name="due_balance" readonly>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Due User Balance</label>
+                        {% for charge in due_charge if user.id == charge.merchant_id %}
+                        <input class="form-control" type="text" value="{{charge.balance_clearence}}" name="due_balance"
+                            readonly>
+                        {% else %}
+                        <input class="form-control" type="text" value="0" name="due_balance" readonly>
+                        {% endfor %}
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-own btn-light" name="edit_user">Save changes</button>
+            </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+<!-------------------------------- Data Update Modal END ---------------------------->

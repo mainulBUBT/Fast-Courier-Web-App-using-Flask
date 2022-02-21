@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, request, render_template, url_for, session, flash
 from flask_login import login_user, current_user
 from functools import wraps
+from sqlalchemy.sql import func
 
 from courier import db
 from courier.admin.forms import LoginForm
@@ -246,3 +247,52 @@ def return_parcels():
         #     print(row.parcel_id)
 
     return render_template('return_parcels.html', return_list = return_list, return_search=return_search, reason_sql = reason_sql)
+
+@admin.route('/merchant_details', methods=['GET', 'POST'])
+def merchant_details():
+
+    earn_sql = ''
+    due_charge = ''
+    user_sqls = ''
+    
+
+    user_search = ''
+    due_charge_s=''
+    earn_sql_s = ''
+
+    page = request.args.get('page',1,type=int)
+    
+    if request.method == 'POST':
+        if 'search' in request.form:
+            name = request.form['name']
+            earn_sql_s = db.session.query(Parcel.merchant_id, func.sum(Parcel.charge+Parcel.due_charge).label('earn')).filter(Parcel.pay_status == '1', Parcel.parcel_status=='delivered', Parcel.merchant_id==User.id).group_by(Parcel.merchant_id)
+            due_charge_s = db.session.query(Parcel.merchant_id, func.sum(Parcel.user_balance).label('balance_clearence'), func.sum(Parcel.due_charge).label('due_charge')).filter(Parcel.pay_status == '0', Parcel.merchant_id==User.id)
+            # user_sql = db.session.query(User.id, User.username, User.email, User.mobile_number, func.sum(Parcel.charge+Parcel.due_charge).label('earn'),func.sum(Parcel.due_charge).label('charge'), Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Parcel.merchant_id, User.id == Merchant.merchant_id).filter(Parcel.merchant_id==Merchant.merchant_id, Parcel.pay_status=='1', Parcel.parcel_status=='delivered').order_by(Merchant.merchant_id.asc()).paginate(page=page,per_page=8)
+            user_search = db.session.query(User.id, User.username, User.email, User.mobile_number, Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Merchant.merchant_id, User.roles=='merchant', User.username==name)
+            
+
+        elif 'update' in request.form:
+            user_id = request.form['update']
+            update_sql = Merchant.query.filter_by(merchant_id = user_id).first()
+            if update_sql and user_id is not None:
+                balance_sql = db.session.query(func.sum(Parcel.user_balance).label('user_balance')).filter(Parcel.pay_status == '1', Parcel.merchant_id == user_id).first()
+                update_sql.balance = balance_sql.user_balance
+                
+                if update_sql.balance is not None:
+                    db.session.commit()
+                    flash(f'Updated user balance {update_sql.balance} Taka added!', 'danger')
+                    return redirect(url_for('admin.merchant_details'))
+                else:
+                    flash(f'User balance is {update_sql.balance}! no changes applied.', 'danger')
+                    return redirect(url_for('admin.merchant_details'))
+        elif 'edit_user':
+            flash('got it')
+            return redirect(url_for('admin.merchant_details'))
+    else:
+        earn_sql = db.session.query(Parcel.merchant_id, func.sum(Parcel.charge+Parcel.due_charge).label('earn')).filter(Parcel.pay_status == '1', Parcel.parcel_status=='delivered', Parcel.merchant_id==User.id).group_by(Parcel.merchant_id)
+        due_charge = db.session.query(Parcel.merchant_id, func.sum(Parcel.user_balance).label('balance_clearence'), func.sum(Parcel.due_charge).label('due_charge')).filter(Parcel.pay_status == '0', Parcel.merchant_id==User.id).group_by(Parcel.merchant_id)
+        # user_sql = db.session.query(User.id, User.username, User.email, User.mobile_number, func.sum(Parcel.charge+Parcel.due_charge).label('earn'),func.sum(Parcel.due_charge).label('charge'), Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Parcel.merchant_id, User.id == Merchant.merchant_id).filter(Parcel.merchant_id==Merchant.merchant_id, Parcel.pay_status=='1', Parcel.parcel_status=='delivered').order_by(Merchant.merchant_id.asc()).paginate(page=page,per_page=8)
+        user_sqls = db.session.query(User.id, User.username, User.email, User.mobile_number, Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Merchant.merchant_id, User.roles=='merchant').order_by(Merchant.merchant_id.asc()).paginate(page=page,per_page=6)
+        
+
+    return render_template('merchant_details.html', user_sql=user_sqls, earn_sql=earn_sql, due_charge=due_charge, user_search = user_search, due_charge_s = due_charge_s, earn_sql_s = earn_sql_s)

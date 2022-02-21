@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Sub menu slidebar -->
+
+<div class="container">
+    <div class="row">
+        <!-------------------------------- Sidebar col-4 Start ---------------------------->
+        {% include 'sidebar.html' %}
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+        <!-- Main contents -->
+        <!-------------------------------- Sidebar col-8 Start ---------------------------->
+
+        <div class="col-sm-12 col-md-12 col-lg-8">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <div class="card mt-3">
+                <div class="card-header">
+                    Search Data
+                </div>
+                <div class="card-body">
+                    <form action="" method="POST">
+                        <div class="form-group">
+                            <input class="form-control" type="text" name="name" placeholder="Input Username" />
+                        </div>
+                        <button type="submit" class="btn btn-own btn-block text-light" name="search">Search</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <!------------------------------ Data SearchBox End ---------------------------->
+
+            {% if user_search %}
+
+            <div class="card">
+                <div class="card-header bg-head">
+                    <h4>Single Merchant Information</h4>
+                </div>
+                <div class="table-responsive-sm table-sm">
+                    <table class="table table-light text-center">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Mobile No</th>
+                                <th scope="col">Balance</th>
+                                <th scope="col">Due Charge</th>
+                                <th scope="col">Earn From</th>
+                                <th style="display:none;">Pickup Addrs</th>
+                                <th style="display:none;">BKash</th>
+                                <th style="display:none;">Bank</th>
+                                <th scope="col">Update</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in user_search %}
+                            <tr>
+                                <td>
+                                    {{ user.id }}
+                                </td>
+                                <td>
+                                    {{ user.username }}
+                                </td>
+                                <td>
+                                    {{ user.email }}
+                                </td>
+                                <td>
+                                    {{ user.mobile_number }}
+                                </td>
+                                <td>
+                                    {{ user.balance }}
+                                </td>
+
+                                {% for charge in due_charge_s if user.id == charge.merchant_id %}
+                                <td>
+                                    {{ charge.due_charge }}
+                                    
+                                </td>
+                                {% else %}
+                                <td>
+                                    0
+                                </td>
+                                {% endfor %}
+
+                                {% for earn in earn_sql_s if user.id == earn.merchant_id %}
+                                <td>
+                                    {{ earn.earn }}
+                                </td>
+                                {% else %}
+                                <td>
+                                    0
+                                </td>
+                                {% endfor %}
+
+
+                                <td>
+                                    <form method='post' action="{{url_for('admin.merchant_details')}}"><button
+                                            type='submit' class='btn btn-warning' name='update' value="{{user.id}}"><i
+                                                class='fas fa-sync-alt'></i></button></form>
+                                </td>
+                                <td>
+                                    <button type='button' class='btn btn-own' data-toggle='modal'
+                                        data-target='#editUser{{user.id}}'><i class='fas fa-edit'></i></button>
+                                </td>
+                                {% include 'user_edit_modal.html' %}
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            {% else %}
+            {% if not user_sql.items == [] %}
+
+            <div class="card">
+                <div class="card-header bg-head">
+                    <h4>All Merchant list</h4>
+                </div>
+                <div class="table-responsive-sm table-sm">
+                    <table class="table table-light text-center">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Mobile No</th>
+                                <th scope="col">Balance</th>
+                                <th scope="col">Due Charge</th>
+                                <th scope="col">Earn From</th>
+                                <th style="display:none;">Pickup Addrs</th>
+                                <th style="display:none;">BKash</th>
+                                <th style="display:none;">Bank</th>
+                                <th scope="col">Update</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in user_sql.items %}
+                            <tr>
+                                <td>
+                                    {{ user.id }}
+                                </td>
+                                <td>
+                                    {{ user.username }}
+                                </td>
+                                <td>
+                                    {{ user.email }}
+                                </td>
+                                <td>
+                                    {{ user.mobile_number }}
+                                </td>
+                                <td>
+                                    {{ user.balance }}
+                                </td>
+
+                                {% for charge in due_charge if user.id == charge.merchant_id %}
+                                <td>
+                                    {{ charge.due_charge }}
+                                </td>
+                                {% else %}
+                                <td>
+                                    0
+                                </td>
+                                {% endfor %}
+
+                                {% for earn in earn_sql if user.id == earn.merchant_id %}
+                                <td>
+                                    {{ earn.earn }}
+                                </td>
+                                {% else %}
+                                <td>
+                                    0
+                                </td>
+                                {% endfor %}
+
+
+                                <td>
+                                    <form method='post' action="{{url_for('admin.merchant_details')}}"><button
+                                            type='submit' class='btn btn-warning' name='update' value="{{user.id}}"><i
+                                                class='fas fa-sync-alt'></i></button></form>
+                                </td>
+                                <td>
+                                    <button type='button' class='btn btn-own' data-toggle='modal'
+                                        data-target='#editUser{{user.id}}'><i class='fas fa-edit'></i></button>
+                                </td>
+                                {% include 'user_edit_modal.html' %}
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% for page_num in user_sql.iter_pages(left_edge=1, right_edge=1, left_current=1,
+                    right_current=2)
+                    %}
+                    {% if user_sql.page == page_num %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="{{ url_for('admin.merchant_details', page=page_num) }}">{{ page_num
+                            }}</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('admin.merchant_details', page=page_num) }}">{{ page_num
+                            }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% else %}
+            <div class='alert alert-warning' role='alert'>
+                There is no pending request.
+            </div>
+            {% endif %}
+
+            {% endif %}
+
+
+
+        </div>
+
+        <!-------------------------------- Sidebar col-4 END ---------------------------->
+
+    </div>
+</div>
+
+
+{% endblock %}

@@ -85,14 +85,14 @@
                                 {{ parcels.id }}
                             </td>
                             <td>
-                                <form method='get' action=''><button type='submit' class='btn btn-danger' name='cancel'
-                                        value='{$pid}'><i class='fas fa-minus-circle'></i></button>
-                                </form>
+                                <button type="button" class="btn btn-danger" data-toggle="modal"
+                                    data-target="#del_modal{{parcels.id}}"><i class='fas fa-minus-circle'></i></button>
+                                {% include 'delete_modals.html' %}
                             </td>
                             <td>
-                                <form method='get' action='../include/invoice.php'><button type='submit'
-                                        class='btn btn-danger' name='invoice' value='{$pid}'><i
-                                            class='far fa-file-pdf'></i></button></form>
+                                <form method='POST' action="{{url_for('core.invoice', id = parcels.id )}}"><button
+                                        type='submit' class='btn btn-danger'><i class='far fa-file-pdf'></i></button>
+                                </form>
                             </td>
                         </tr>
                         {% endfor %}
@@ -143,7 +143,7 @@
                             <td>
                                 <button type="button" class="btn btn-danger" data-toggle="modal"
                                     data-target="#del_modal{{parcels.id}}"><i class='fas fa-minus-circle'></i></button>
-                                {% include 'modals.html' %}
+                                {% include 'delete_modals.html' %}
                             </td>
                             <td>
                                 <form method='POST' action="{{url_for('core.invoice', id = parcels.id )}}"><button
