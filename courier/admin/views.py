@@ -8,8 +8,8 @@ from courier.admin.forms import LoginForm
 from courier.models import Merchant, DeliveryInfo, Parcel, User, ReturnParcel
 
 
-
 admin = Blueprint('admin', __name__, template_folder='templates')
+
 
 def login_required_admin(f):
     @wraps(f)
@@ -21,8 +21,6 @@ def login_required_admin(f):
             return redirect(url_for('core.index'))
 
     return wrap
-
-
 
 
 @admin.route('/admin_login', methods=['GET', 'POST'])
@@ -38,7 +36,7 @@ def admin_login():
             session['role'] = user.roles
             if session['role'] == 'admin':
                 session['logged_in_admin'] = True
-                flash('Logged in successfully', "success" )
+                flash('Logged in successfully', "success")
 
                 next = request.args.get('next')
                 if next == None or not next[0] == '/':
@@ -48,10 +46,8 @@ def admin_login():
                 flash('Username and Password not found!', 'danger')
                 return redirect(url_for('admin.admin_login'))
         else:
-            flash('information Wrong!', "danger" )  
+            flash('information Wrong!', "danger")
     return render_template('admin_login.html', form=form)
-
-
 
 
 @admin.route('/admin_dashboard')
@@ -66,12 +62,13 @@ def pending_parcels():
     pending_search = ''
     pending_list = ''
 
-    page = request.args.get('page',1,type=int)
+    page = request.args.get('page', 1, type=int)
 
     if request.method == 'POST':
         if 'search' in request.form:
             track_number = int(request.form['track_number'])
-            pending_search = db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number , Parcel.parcel_status == 'Not pickup yet')
+            pending_search = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man,
+                                              Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number, Parcel.parcel_status == 'Not pickup yet')
         elif 'update' in request.form:
             parcel_id = request.form['parcel_id']
             delivery_man = request.form['delivery_man']
@@ -84,12 +81,15 @@ def pending_parcels():
                 update_sql.delivery_man = delivery_man
                 update_sql.parcel_status = parcel_status
                 db.session.commit()
-                flash('Parcel Sent to the '+ parcel_status +' section', 'warning')
-                return redirect(url_for('admin.pending_parcels')) 
+                flash('Parcel Sent to the ' +
+                      parcel_status + ' section', 'warning')
+                return redirect(url_for('admin.pending_parcels'))
     else:
-        pending_list= db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status,DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'Not pickup yet').order_by(DeliveryInfo.book_date.asc()).paginate(page=page,per_page=8)
-   
-    return render_template('pending_parcels.html', pending_list = pending_list, pending_search=pending_search)
+        pending_list = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id,
+                                        Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'Not pickup yet').order_by(DeliveryInfo.book_date.asc()).paginate(page=page, per_page=8)
+
+    return render_template('pending_parcels.html', pending_list=pending_list, pending_search=pending_search)
+
 
 @admin.route('/delivered_parcels', methods=['GET', 'POST'])
 def delivered_parcels():
@@ -97,12 +97,13 @@ def delivered_parcels():
     delivered_search = ''
     delivered_list = ''
 
-    page = request.args.get('page',1,type=int)
+    page = request.args.get('page', 1, type=int)
 
     if request.method == 'POST':
         if 'search' in request.form:
             track_number = int(request.form['track_number'])
-            delivered_search = db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number , Parcel.parcel_status == 'delivered')
+            delivered_search = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man,
+                                                Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number, Parcel.parcel_status == 'delivered')
         elif 'update' in request.form:
             parcel_id = request.form['parcel_id']
             delivery_man = request.form['delivery_man']
@@ -115,12 +116,15 @@ def delivered_parcels():
                 update_sql.delivery_man = delivery_man
                 update_sql.parcel_status = parcel_status
                 db.session.commit()
-                flash('Parcel Sent to the '+ parcel_status +' section', 'warning')
-                return redirect(url_for('admin.delivered_parcels')) 
+                flash('Parcel Sent to the ' +
+                      parcel_status + ' section', 'warning')
+                return redirect(url_for('admin.delivered_parcels'))
     else:
-        delivered_list= db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status,DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'delivered').order_by(DeliveryInfo.book_date.asc()).paginate(page=page,per_page=8)
-   
-    return render_template('delivered_parcels.html', delivered_list = delivered_list, delivered_search=delivered_search)
+        delivered_list = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id,
+                                          Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'delivered').order_by(DeliveryInfo.book_date.asc()).paginate(page=page, per_page=8)
+
+    return render_template('delivered_parcels.html', delivered_list=delivered_list, delivered_search=delivered_search)
+
 
 @admin.route('/pickedup_parcels', methods=['GET', 'POST'])
 def pickedup_parcels():
@@ -128,12 +132,13 @@ def pickedup_parcels():
     pickedup_search = ''
     pickedup_list = ''
 
-    page = request.args.get('page',1,type=int)
+    page = request.args.get('page', 1, type=int)
 
     if request.method == 'POST':
         if 'search' in request.form:
             track_number = int(request.form['track_number'])
-            pickedup_search = db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number , Parcel.parcel_status == 'picked up')
+            pickedup_search = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man,
+                                               Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number, Parcel.parcel_status == 'picked up')
         elif 'update' in request.form:
             parcel_id = request.form['parcel_id']
             delivery_man = request.form['delivery_man']
@@ -146,12 +151,15 @@ def pickedup_parcels():
                 update_sql.delivery_man = delivery_man
                 update_sql.parcel_status = parcel_status
                 db.session.commit()
-                flash('Parcel Sent to the '+ parcel_status +' section', 'warning')
-                return redirect(url_for('admin.pickedup_parcels')) 
+                flash('Parcel Sent to the ' +
+                      parcel_status + ' section', 'warning')
+                return redirect(url_for('admin.pickedup_parcels'))
     else:
-        pickedup_list= db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status,DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'picked up').order_by(DeliveryInfo.book_date.asc()).paginate(page=page,per_page=8)
-   
-    return render_template('pickedup_parcels.html', pickedup_list = pickedup_list, pickedup_search=pickedup_search)
+        pickedup_list = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id,
+                                         Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'picked up').order_by(DeliveryInfo.book_date.asc()).paginate(page=page, per_page=8)
+
+    return render_template('pickedup_parcels.html', pickedup_list=pickedup_list, pickedup_search=pickedup_search)
+
 
 @admin.route('/transit_parcels', methods=['GET', 'POST'])
 def transit_parcels():
@@ -159,12 +167,13 @@ def transit_parcels():
     transit_search = ''
     transit_list = ''
 
-    page = request.args.get('page',1,type=int)
+    page = request.args.get('page', 1, type=int)
 
     if request.method == 'POST':
         if 'search' in request.form:
             track_number = int(request.form['track_number'])
-            transit_search = db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number , Parcel.parcel_status == 'in transit')
+            transit_search = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man,
+                                              Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number, Parcel.parcel_status == 'in transit')
         elif 'update' in request.form:
             parcel_id = request.form['parcel_id']
             delivery_man = request.form['delivery_man']
@@ -177,12 +186,14 @@ def transit_parcels():
                 update_sql.delivery_man = delivery_man
                 update_sql.parcel_status = parcel_status
                 db.session.commit()
-                flash('Parcel Sent to the '+ parcel_status +' section', 'warning')
-                return redirect(url_for('admin.transit_parcels')) 
+                flash('Parcel Sent to the ' +
+                      parcel_status + ' section', 'warning')
+                return redirect(url_for('admin.transit_parcels'))
     else:
-        transit_list= db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status,DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'in transit').order_by(DeliveryInfo.book_date.asc()).paginate(page=page,per_page=8)
-   
-    return render_template('transit_parcels.html', transit_list = transit_list, transit_search=transit_search)
+        transit_list = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id,
+                                        Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'in transit').order_by(DeliveryInfo.book_date.asc()).paginate(page=page, per_page=8)
+
+    return render_template('transit_parcels.html', transit_list=transit_list, transit_search=transit_search)
 
 
 @admin.route('/return_parcels', methods=['GET', 'POST'])
@@ -192,12 +203,13 @@ def return_parcels():
     return_list = ''
     reason_sql = ''
 
-    page = request.args.get('page',1,type=int)
+    page = request.args.get('page', 1, type=int)
 
     if request.method == 'POST':
         if 'search' in request.form:
             track_number = int(request.form['track_number'])
-            return_search = db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number , Parcel.parcel_status == 'Return to Hub')
+            return_search = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man,
+                                             Parcel.id, Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.id == track_number, Parcel.parcel_status == 'Return to Hub')
         elif 'update' in request.form:
             parcel_id = request.form['parcel_id']
             delivery_man = request.form['delivery_man']
@@ -210,25 +222,26 @@ def return_parcels():
                 update_sql.delivery_man = delivery_man
                 update_sql.parcel_status = parcel_status
                 db.session.commit()
-                flash('Parcel Sent to the '+ parcel_status +' section', 'warning')
+                flash('Parcel Sent to the ' +
+                      parcel_status + ' section', 'warning')
                 return redirect(url_for('admin.return_parcels'))
 
         elif 'report_2' in request.form:
             parcel_id = request.form['parcel_id']
             reason = request.form['message']
-            
+
             add_reason = ReturnParcel(parcel_id=parcel_id, reason=reason)
             db.session.add(add_reason)
             db.session.commit()
             flash('Reported reason for return the parcel', 'danger')
-            return redirect(url_for('admin.return_parcels')) 
+            return redirect(url_for('admin.return_parcels'))
 
         elif 'report_1' in request.form:
             reason_id = request.form['reason_id']
-            print(reason_id)
+            # print(reason_id)
             parcel_id = request.form['parcel_id']
             reason = request.form['message']
-            
+
             update_reason = ReturnParcel.query.filter_by(id=reason_id).first()
             print(update_reason)
             if update_reason:
@@ -236,17 +249,20 @@ def return_parcels():
                 update_reason.reason = reason
                 db.session.commit()
                 flash('Reported reason for return the parcel', 'danger')
-                return redirect(url_for('admin.return_parcels')) 
+                return redirect(url_for('admin.return_parcels'))
     else:
-        return_list= db.session.query(DeliveryInfo.receiver_name,DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id, Parcel.parcel_status,DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'Return to Hub').order_by(DeliveryInfo.book_date.asc()).paginate(page=page,per_page=8)
-        
-        reason_sql = db.session.query(ReturnParcel.id , ReturnParcel.parcel_id, ReturnParcel.reason ,ReturnParcel.updated_date).join(Parcel).filter(Parcel.id == ReturnParcel.parcel_id)
+        return_list = db.session.query(DeliveryInfo.receiver_name, DeliveryInfo.receiver_number, DeliveryInfo.receiver_address, DeliveryInfo.delivery_area, Parcel.delivery_man, Parcel.id,
+                                       Parcel.parcel_status, DeliveryInfo.receiver_number).join(Parcel).filter(Parcel.parcel_status == 'Return to Hub').order_by(DeliveryInfo.book_date.asc()).paginate(page=page, per_page=8)
+
+        reason_sql = db.session.query(ReturnParcel.id, ReturnParcel.parcel_id, ReturnParcel.reason,
+                                      ReturnParcel.updated_date).join(Parcel).filter(Parcel.id == ReturnParcel.parcel_id)
         # for row in reason_sql:
         #     # return_parcel_id = row.parcel_id
         #     # reason_message = row.reason
         #     print(row.parcel_id)
 
-    return render_template('return_parcels.html', return_list = return_list, return_search=return_search, reason_sql = reason_sql)
+    return render_template('return_parcels.html', return_list=return_list, return_search=return_search, reason_sql=reason_sql)
+
 
 @admin.route('/merchant_details', methods=['GET', 'POST'])
 def merchant_details():
@@ -254,45 +270,72 @@ def merchant_details():
     earn_sql = ''
     due_charge = ''
     user_sqls = ''
-    
 
     user_search = ''
-    due_charge_s=''
+    due_charge_s = ''
     earn_sql_s = ''
 
-    page = request.args.get('page',1,type=int)
-    
+    page = request.args.get('page', 1, type=int)
+
     if request.method == 'POST':
         if 'search' in request.form:
             name = request.form['name']
-            earn_sql_s = db.session.query(Parcel.merchant_id, func.sum(Parcel.charge+Parcel.due_charge).label('earn')).filter(Parcel.pay_status == '1', Parcel.parcel_status=='delivered', Parcel.merchant_id==User.id).group_by(Parcel.merchant_id)
-            due_charge_s = db.session.query(Parcel.merchant_id, func.sum(Parcel.user_balance).label('balance_clearence'), func.sum(Parcel.due_charge).label('due_charge')).filter(Parcel.pay_status == '0', Parcel.merchant_id==User.id)
+            earn_sql_s = db.session.query(Parcel.merchant_id, func.sum(Parcel.charge+Parcel.due_charge).label('earn')).filter(
+                Parcel.pay_status == '1', Parcel.parcel_status == 'delivered', Parcel.merchant_id == User.id).group_by(Parcel.merchant_id)
+            due_charge_s = db.session.query(Parcel.merchant_id, func.sum(Parcel.user_balance).label('balance_clearence'), func.sum(
+                Parcel.due_charge).label('due_charge')).filter(Parcel.pay_status == '0', Parcel.merchant_id == User.id)
             # user_sql = db.session.query(User.id, User.username, User.email, User.mobile_number, func.sum(Parcel.charge+Parcel.due_charge).label('earn'),func.sum(Parcel.due_charge).label('charge'), Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Parcel.merchant_id, User.id == Merchant.merchant_id).filter(Parcel.merchant_id==Merchant.merchant_id, Parcel.pay_status=='1', Parcel.parcel_status=='delivered').order_by(Merchant.merchant_id.asc()).paginate(page=page,per_page=8)
-            user_search = db.session.query(User.id, User.username, User.email, User.mobile_number, Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Merchant.merchant_id, User.roles=='merchant', User.username==name)
-            
+            user_search = db.session.query(User.id, User.username, User.email, User.mobile_number, Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(
+                User.id == Merchant.merchant_id, User.roles == 'merchant', User.username == name)
 
         elif 'update' in request.form:
             user_id = request.form['update']
-            update_sql = Merchant.query.filter_by(merchant_id = user_id).first()
+            update_sql = Merchant.query.filter_by(merchant_id=user_id).first()
             if update_sql and user_id is not None:
-                balance_sql = db.session.query(func.sum(Parcel.user_balance).label('user_balance')).filter(Parcel.pay_status == '1', Parcel.merchant_id == user_id).first()
+                balance_sql = db.session.query(func.sum(Parcel.user_balance).label('user_balance')).filter(
+                    Parcel.pay_status == '1', Parcel.merchant_id == user_id).first()
                 update_sql.balance = balance_sql.user_balance
-                
+
                 if update_sql.balance is not None:
                     db.session.commit()
-                    flash(f'Updated user balance {update_sql.balance} Taka added!', 'danger')
+                    flash(
+                        f'Updated user balance {update_sql.balance} Taka added!', 'danger')
                     return redirect(url_for('admin.merchant_details'))
                 else:
-                    flash(f'User balance is {update_sql.balance}! no changes applied.', 'danger')
+                    flash(
+                        f'User balance is {update_sql.balance}! no changes applied.', 'danger')
                     return redirect(url_for('admin.merchant_details'))
         elif 'edit_user':
-            flash('got it')
-            return redirect(url_for('admin.merchant_details'))
-    else:
-        earn_sql = db.session.query(Parcel.merchant_id, func.sum(Parcel.charge+Parcel.due_charge).label('earn')).filter(Parcel.pay_status == '1', Parcel.parcel_status=='delivered', Parcel.merchant_id==User.id).group_by(Parcel.merchant_id)
-        due_charge = db.session.query(Parcel.merchant_id, func.sum(Parcel.user_balance).label('balance_clearence'), func.sum(Parcel.due_charge).label('due_charge')).filter(Parcel.pay_status == '0', Parcel.merchant_id==User.id).group_by(Parcel.merchant_id)
-        # user_sql = db.session.query(User.id, User.username, User.email, User.mobile_number, func.sum(Parcel.charge+Parcel.due_charge).label('earn'),func.sum(Parcel.due_charge).label('charge'), Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Parcel.merchant_id, User.id == Merchant.merchant_id).filter(Parcel.merchant_id==Merchant.merchant_id, Parcel.pay_status=='1', Parcel.parcel_status=='delivered').order_by(Merchant.merchant_id.asc()).paginate(page=page,per_page=8)
-        user_sqls = db.session.query(User.id, User.username, User.email, User.mobile_number, Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Merchant.merchant_id, User.roles=='merchant').order_by(Merchant.merchant_id.asc()).paginate(page=page,per_page=6)
-        
+            user_id = request.form['merchant_id']
+            mobile_number = request.form['mobile_number']
+            pickup_add = request.form['pickup_add']
+            bkash = request.form['bkash']
+            bank = request.form['bank']
 
-    return render_template('merchant_details.html', user_sql=user_sqls, earn_sql=earn_sql, due_charge=due_charge, user_search = user_search, due_charge_s = due_charge_s, earn_sql_s = earn_sql_s)
+            user_sql = User.query.filter_by(id=user_id).first()
+            merchant_sql = Merchant.query.filter_by(
+                merchant_id=user_id).first()
+            print(f'{user_sql} and {merchant_sql}')
+            if merchant_sql is not None:
+                user_sql.mobile_number = mobile_number
+                merchant_sql.pickup_address = pickup_add
+                merchant_sql.bkash_number = bkash
+                merchant_sql.bank_number = bank
+                db.session.commit()
+                flash('Updated user information!', 'warning')
+                return redirect(url_for('admin.merchant_details'))
+    else:
+        earn_sql = db.session.query(Parcel.merchant_id, func.sum(Parcel.charge+Parcel.due_charge).label('earn')).filter(
+            Parcel.pay_status == '1', Parcel.parcel_status == 'delivered', Parcel.merchant_id == User.id).group_by(Parcel.merchant_id)
+        due_charge = db.session.query(Parcel.merchant_id, func.sum(Parcel.user_balance).label('balance_clearence'), func.sum(
+            Parcel.due_charge).label('due_charge')).filter(Parcel.pay_status == '0', Parcel.merchant_id == User.id).group_by(Parcel.merchant_id)
+        # user_sql = db.session.query(User.id, User.username, User.email, User.mobile_number, func.sum(Parcel.charge+Parcel.due_charge).label('earn'),func.sum(Parcel.due_charge).label('charge'), Merchant.balance, Merchant.bank_number, Merchant.bkash_number).filter(User.id == Parcel.merchant_id, User.id == Merchant.merchant_id).filter(Parcel.merchant_id==Merchant.merchant_id, Parcel.pay_status=='1', Parcel.parcel_status=='delivered').order_by(Merchant.merchant_id.asc()).paginate(page=page,per_page=8)
+        user_sqls = db.session.query(User.id, User.username, User.email, User.mobile_number, Merchant.balance, Merchant.bank_number, Merchant.bkash_number, Merchant.pickup_address).filter(
+            User.id == Merchant.merchant_id, User.roles == 'merchant').order_by(Merchant.merchant_id.asc()).paginate(page=page, per_page=6)
+
+    return render_template('merchant_details.html', user_sql=user_sqls, earn_sql=earn_sql, due_charge=due_charge, user_search=user_search, due_charge_s=due_charge_s, earn_sql_s=earn_sql_s)
+
+
+@admin.route('/employee_details', methods=['GET', 'POST'])
+def employee_details():
+    return render_template('employee_details.html')
